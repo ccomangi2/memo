@@ -39,7 +39,7 @@ public class ChatingActivity extends BaseActivity {
 
         lv_chating = (ListView) findViewById(R.id.lv_chating);
         btn_send = (Button) findViewById(R.id.btn_send);
-        et_msg = (EditText) findViewById(R.id.et_msg);
+        et_msg = (EditText) findViewById(R.id.et_send);
 
         arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
         lv_chating.setAdapter(arrayAdapter);
