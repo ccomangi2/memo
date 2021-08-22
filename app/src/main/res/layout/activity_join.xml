@@ -16,21 +16,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/img_profile"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="5dp"
-            tools:srcCompat="@tools:sample/avatars" />
-
-        <Button
-            android:id="@+id/bt_profile_edit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="50dp"
-            android:text="edit" />
+            android:text="회원가입"
+            android:textSize="24sp"
+            android:textColor="@color/black"
+            android:layout_marginBottom="20dp"
+            android:layout_gravity="center_horizontal"/>
 
         <EditText
             android:id="@+id/et_nickname"
@@ -43,14 +36,15 @@
             android:ems="10" />
 
         <EditText
-            android:id="@+id/et_id"
+            android:id="@+id/et_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
             android:layout_marginBottom="10dp"
-            android:hint="아이디"
-            android:ems="10" />
+            android:ems="10"
+            android:hint="이메일"
+            android:inputType="textEmailAddress" />
 
         <EditText
             android:id="@+id/et_pw"
@@ -71,8 +65,7 @@
             android:layout_marginRight="30dp"
             android:layout_marginBottom="10dp"
             android:hint="국적(ko, ja, zh-CN)"
-            android:ems="10"
-            android:inputType="textPassword" />
+            android:ems="10" />
 
 
         <Button

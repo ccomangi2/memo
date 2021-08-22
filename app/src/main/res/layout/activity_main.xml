@@ -32,8 +32,8 @@
             android:layout_marginBottom="5dp"
             android:paddingLeft="15dp"
             android:ems="10"
-            android:inputType="textPersonName"
-            android:hint="id"/>
+            android:inputType="textEmailAddress"
+            android:hint="email"/>
 
         <EditText
             android:id="@+id/et_pw"
