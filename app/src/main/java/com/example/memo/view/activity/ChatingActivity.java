@@ -14,6 +14,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -25,12 +26,15 @@ public class ChatingActivity extends BaseActivity {
     private ListView lv_chating;
 
     private ArrayAdapter<String> arrayAdapter;
+    private ArrayList<String> arr_room = new ArrayList<>();
 
-    private String str_name;
-    private String str_msg;
+    private String str_room_name;
+    private String str_user_name;
+
+    private DatabaseReference reference;
+    private String key;
     private String chat_user;
-    private DatabaseReference reference = FirebaseDatabase.getInstance()
-            .getReference().child("message");
+    private String chat_message;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,32 +45,32 @@ public class ChatingActivity extends BaseActivity {
         btn_send = (Button) findViewById(R.id.btn_send);
         et_msg = (EditText) findViewById(R.id.et_send);
 
-        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
-        lv_chating.setAdapter(arrayAdapter);
+        str_room_name = getIntent().getExtras().get("room_name").toString();
+        str_user_name = getIntent().getExtras().get("user_name").toString();
+        reference = FirebaseDatabase.getInstance().getReference("Room").child(str_room_name);
 
+
+        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, arr_room);
+        lv_chating.setAdapter(arrayAdapter);
         // 리스트뷰가 갱신될때 하단으로 자동 스크롤
         lv_chating.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
 
-        str_name = "Guest " + new Random().nextInt(1000);
-
         btn_send.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View view) {
-
                 // map을 사용해 name과 메시지를 가져오고, key에 값 요청
                 Map<String, Object> map = new HashMap<String, Object>();
-
-                // key로 데이터베이스 오픈
-                String key = reference.push().getKey();
+                key = reference.push().getKey();
                 reference.updateChildren(map);
 
-                DatabaseReference dbRef = reference.child(key);
+                DatabaseReference root = reference.child(key);
 
+                // updateChildren를 호출하여 database 최종 업데이트
                 Map<String, Object> objectMap = new HashMap<String, Object>();
+                objectMap.put("name", str_user_name);
+                objectMap.put("message", et_msg.getText().toString());
 
-                objectMap.put("str_name", str_name);
-                objectMap.put("text", et_msg.getText().toString());
+                root.updateChildren(objectMap);
 
-                dbRef.updateChildren(objectMap);
                 et_msg.setText("");
             }
         });
@@ -82,11 +86,11 @@ public class ChatingActivity extends BaseActivity {
 
         reference.addChildEventListener(new ChildEventListener() {
             @Override public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                chatListener(dataSnapshot);
+                chatConversation(dataSnapshot);
             }
 
             @Override public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                chatListener(dataSnapshot);
+                chatConversation(dataSnapshot);
             }
 
             @Override public void onChildRemoved(DataSnapshot dataSnapshot) {
@@ -103,19 +107,18 @@ public class ChatingActivity extends BaseActivity {
         });
     }
 
-    private void chatListener(DataSnapshot dataSnapshot) {
-        // dataSnapshot 밸류값 가져옴
+    // addChildEventListener를 통해 실제 데이터베이스에 변경된 값이 있으면,
+    // 화면에 보여지고 있는 Listview의 값을 갱신함
+    private void chatConversation(DataSnapshot dataSnapshot) {
         Iterator i = dataSnapshot.getChildren().iterator();
 
         while (i.hasNext()) {
+            chat_message = (String) ((DataSnapshot) i.next()).getValue();
             chat_user = (String) ((DataSnapshot) i.next()).getValue();
-            str_msg = (String) ((DataSnapshot) i.next()).getValue();
 
-            // 유저이름, 메시지를 가져와서 array에 추가
-            arrayAdapter.add(chat_user + " : " + str_msg);
+            arrayAdapter.add(chat_user + " : " + chat_message);
         }
 
-        // 변경된값으로 리스트뷰 갱신
         arrayAdapter.notifyDataSetChanged();
     }
 }
